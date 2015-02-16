@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="us">
+<head>
+	<meta charset="utf-8">
+	<title>The Knowledge Tree</title>
+	<link href="css/ui-lightness/jquery-ui-1.10.3.custom.css" rel="stylesheet">
+	<script src="js/jquery-1.9.1.js"></script>
+	<script src="js/jquery-ui-1.10.3.custom.js"></script>
+	<script language="javascript" type="text/javascript" src="jquery.min.js"></script>
+	<script language="javascript" type="text/javascript" src="arbor.js"></script>
+	<script language="javascript" type="text/javascript" src="graphics.js"></script>
+	<script language="javascript" type="text/javascript" src="renderer.js"></script>
+	<script language="javascript" type="text/javascript" src="functionality.js"></script>
+	<script src="/ckeditor/ckeditor.js"></script>
+</head>
+<body>
+
+<div id="top_bar">
+
+	<input type="text" id="query">
+	<input type="submit" id ='submit'>
+	<script>
+		var query_string;
+		var Sub = document.getElementById('submit');
+		Sub.onclick= function(){
+		    query_string = document.getElementById('query').value;
+		    document.getElementById('query').value = ''
+		    knowledgeTree.searchNode(query_string);
+		}
+	</script>
+
+	<ul id="menu">
+		<li><a href="#">Contact</a></li>
+		<li><a href="#">Docs</a></li>
+		<li><a href="#">About</a></li>
+		<li><a href="#" onclick="Display(2); DrawEverything()">Home</a></li>
+	</ul>
+</div>
+
+<div id="tree">
+<canvas id="viewport" width="900" height="600"></canvas>
+<div id="edit">
+	<input type="submit" id="delete_edge" value="Delete Edge">
+	<input type="submit" id="add_edge" value ="Add Edge">
+	<input type="submit" id="add_button" value="Edit" onclick="Display(1)">
+	<input type="submit" id="add_node" value="Add Node">
+	<script>
+		Add_Node = document.getElementById('add_node');
+		Add_Node.onclick = function(){
+			var node_name = prompt ("Please enter a name for the node!", "New Node!");
+		        knowledgeTree.addNode(node_name, "")
+		}
+		$("#add_edge").click(function(e) {
+		        edgeOp = 1;
+		        edgeFn = function(parID,cID) {
+                            knowledgeTree.addEdge(parID,cID);
+		        }
+		});
+		$("#delete_edge").click(function(e) {
+		        edgeOp = 1;
+		        edgeFn = function(parID,cID) {
+                            knowledgeTree.deleteEdge(parID,cID);
+		        }
+		});
+		
+	</script>
+</div>
+</div>
+<script src = "graphmanager.js"></script>
+</div> 
+<div id="editor_block" style="display:none;">
+<textarea name="editor" id="text_editor">&lt;p&gt;Initial value.&lt;/p&gt;</textarea>
+<script>
+var edt = CKEDITOR.replace( 'editor' );
+CKEDITOR.plugins.registered['save']=
+      {
+           init : function( editor )
+           {
+              var command = editor.addCommand( 'save', 
+                 {
+                    modes : { wysiwyg:1, source:1 },
+                    exec : function( editor ) {
+                       knowledgeTree.editContent(Focused, CKEDITOR.instances['text_editor'].getData())
+                    }
+                 }
+              );
+              editor.ui.addButton( 'Save',{label : 'Magic Save',command : 'save'});
+           }
+        }
+</script>
+</div>
+
+<div id="content_block" style="display:none;">
+</div>
+<script>
+
+
+var DocWidth = document.body.clientWidth;
+var DocHeight = document.body.clientHeight;
+var content_block = document.getElementById('content_block');
+var Tree = document.getElementById('viewport');
+var Editor = document.getElementById('text_editor');
+var editor_block= document.getElementById("editor_block");
+function Display(content) {
+	if(content==0){
+		//display content
+		Tree.width=DocWidth*0.45;
+		Tree.style.width=DocWidth*0.45 + "px";
+
+		editor_block.style.display = "none";
+                Editor.style.display = "none"
+
+                content_block.style.display = "inline";
+		content_block.style.width=DocWidth*0.45 +"px";
+		content_block.style.backgroundColor="FFD555";
+		content_block.style.height = "1000px"; 
+	}
+	if(content==1) {
+		//display text editor
+                // Set default value to Nodes[Focused].content here
+                CKEDITOR.instances['text_editor'].setData(Nodes[Focused].content);
+                Tree.width=DocWidth*0.45;
+                Tree.style.width = (DocWidth*0.45) + "px"
+		editor_block.style.width=DocWidth*0.45 + "px"; 
+		Editor.style.display = "inline";
+                editor_block.style.display = "inline";
+		editor_block.style.height = Editor.height;
+                content_block.style.display = "none"
+                content_block.style.height = "0px";
+	}
+
+        if(content==2) {
+                content_block.style.display = "none"
+                Editor.style.display = "none"
+                editor_block.style.display = "none"
+
+                Tree.width = 0.9*DocWidth;
+                Tree.style.width = 0.9*DocWidth+'px'
+        }
+
+        sys.screenSize(Tree.width, 600)
+}
+var kk = true;
+Display(2);
+
+</script>
+
+<div id="content_block" style="display:none;">
+</div>
+
+<script language="javascript" type="text/javascript" src="treeBack.js"></script>
+
+</body>
+</html>
