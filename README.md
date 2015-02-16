@@ -1,3 +1,5 @@
+Cloned from https://github.com/Cynary. Our project at the 2013 HackMIT. 
+
 tree_of_knowledge
 =================
 
